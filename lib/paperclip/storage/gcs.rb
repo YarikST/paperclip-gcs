@@ -25,7 +25,7 @@ module Paperclip
           @gcs_cache_control  = normalize_style(@options[:gcs_cache_control])
 
           unless @options[:url].to_s.match(%r{\A:gcs_(alias|path|domain)_url\z}) || @options[:url] == ":asset_host".freeze
-            @options[:path] = path_option.gsub(/:url/, @options[:url]).sub(%r{\A:rails_root/public/system}, "".freeze)
+            @options[:path] = path_option.gsub(/:url/, @options[:url]).sub(%r{\A:rails_root/public/system/}, "".freeze)
             @options[:url] = ":gcs_path_url".freeze
           end
         end
@@ -106,7 +106,13 @@ module Paperclip
       end
 
       def gcs_protocol
-        unwrap_proc(@gcs_protocol, self)
+        protocol = unwrap_proc(@gcs_protocol, self)
+
+        unless protocol.empty?
+          "#{protocol}:"
+        else
+          protocol.to_s
+        end
       end
 
       def gcs_host_alias
